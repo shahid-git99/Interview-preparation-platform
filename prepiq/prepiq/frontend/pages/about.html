@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — PrepIQ</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .about-hero {
+      padding: 8rem 0 4rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .about-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem,5vw,3.6rem); font-weight: 800;
+      letter-spacing: -1.5px; margin-bottom: 1rem;
+    }
+    .about-hero p { color: var(--slate2); max-width: 540px; margin: 0 auto; font-size: 1.05rem; line-height: 1.75; }
+
+    .mission { padding: 5rem 0; }
+    .mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .mission-text h2 {
+      font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+      letter-spacing: -0.5px; margin-bottom: 1rem;
+    }
+    .mission-text p { color: var(--slate2); line-height: 1.8; margin-bottom: 1rem; }
+
+    .mission-visual {
+      background: var(--card); border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 2.5rem; display: flex; flex-direction: column; gap: 1.25rem;
+    }
+    .mock-line {
+      display: flex; align-items: flex-start; gap: 1rem;
+    }
+    .mock-avatar {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: .9rem;
+    }
+    .av-ai  { background: rgba(67,97,238,0.25); }
+    .av-usr { background: rgba(6,214,160,0.2); }
+    .mock-bubble {
+      background: rgba(255,255,255,0.05); border-radius: var(--radius-sm);
+      padding: .75rem 1rem; font-size: .85rem; color: var(--slate2); flex: 1;
+    }
+
+    .tech-stack { padding: 4rem 0 6rem; }
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 1rem; margin-top: 2.5rem; }
+    .tech-card {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius); padding: 1.5rem; text-align: center;
+    }
+    .tech-icon { font-size: 2rem; margin-bottom: .75rem; }
+    .tech-card h4 { font-family: var(--font-display); font-size: .95rem; font-weight: 700; margin-bottom: .25rem; }
+    .tech-card p { font-size: .8rem; color: var(--slate); }
+
+    @media(max-width:768px) { .mission-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Prep<span>IQ</span></a>
+  <div class="nav-links">
+    <a href="index.html" class="hide-mobile">Home</a>
+    <a href="about.html" class="active hide-mobile">About</a>
+    <a href="login.html">Log in</a>
+    <a href="signup.html" class="nav-cta">Get Started</a>
+  </div>
+</nav>
+
+<section class="about-hero container">
+  <div class="hero-grid"></div>
+  <div class="badge badge-indigo" style="margin-bottom:1.5rem;">The PrepIQ Story</div>
+  <h1>Interview prep that<br>actually <span style="color:var(--indigo);">adapts</span> to you.</h1>
+  <p>PrepIQ was built as an internship project to explore how generative AI can replace generic mock interview tools with something truly personal.</p>
+</section>
+
+<section class="mission">
+  <div class="container">
+    <div class="mission-grid">
+      <div class="mission-text">
+        <p class="section-label">Our Mission</p>
+        <h2>Every candidate deserves prep that matches their level.</h2>
+        <p>Generic interview prep is broken. You get the same questions whether you're a fresher or a five-year veteran, studying Computer Science or Biotech. PrepIQ fixes this by reading your actual profile before generating a single question.</p>
+        <p>By connecting your background — college, degree, domain, experience, and resume — to a Gemini-powered engine, PrepIQ generates contextual questions that feel like a real recruiter prepared them specifically for you.</p>
+        <a href="signup.html" class="btn btn-primary" style="margin-top:1rem;">Try it free →</a>
+      </div>
+      <div class="mission-visual">
+        <p style="font-size:.75rem;font-weight:600;color:var(--slate);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Live interview preview</p>
+        <div class="mock-line">
+          <div class="mock-avatar av-ai">🤖</div>
+          <div class="mock-bubble">You mentioned 2 years with React. Walk me through how you'd architect a real-time dashboard for 50k concurrent users.</div>
+        </div>
+        <div class="mock-line" style="flex-direction:row-reverse;">
+          <div class="mock-avatar av-usr">👤</div>
+          <div class="mock-bubble" style="text-align:right;">I'd start by evaluating WebSockets vs. SSE for push updates, then consider a Redis pub/sub layer…</div>
+        </div>
+        <div class="mock-line">
+          <div class="mock-avatar av-ai">🤖</div>
+          <div class="mock-bubble">Good instinct. How would you handle connection drops without the user noticing?</div>
+        </div>
+        <div style="margin-top:.5rem; padding:.75rem; background:rgba(6,214,160,0.08); border-radius:var(--radius-sm); border:1px solid rgba(6,214,160,0.2);">
+          <p style="font-size:.8rem;color:var(--mint);">✓ Questions dynamically adapt to your answers in real time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tech-stack">
+  <div class="container">
+    <p class="section-label">Built With</p>
+    <h2 class="section-title">The tech behind PrepIQ.</h2>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-icon">🐍</div>
+        <h4>FastAPI</h4>
+        <p>Python backend with async REST endpoints</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🍃</div>
+        <h4>MongoDB</h4>
+        <p>Flexible document store for profiles & sessions</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">✨</div>
+        <h4>Gemini API</h4>
+        <p>Google's generative AI for question generation</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🔐</div>
+        <h4>JWT Auth</h4>
+        <p>Stateless, secure token-based auth</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🌐</div>
+        <h4>Vanilla JS</h4>
+        <p>Lightweight frontend — no framework overhead</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">📄</div>
+        <h4>Resume Upload</h4>
+        <p>PDF parsing to enrich AI context</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="border-top:1px solid rgba(255,255,255,0.06);padding:2.5rem 5vw;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+  <p style="color:var(--slate);font-size:.85rem;">© 2025 PrepIQ. Built for internship demonstration.</p>
+  <div style="display:flex;gap:1.5rem;">
+    <a href="index.html" style="color:var(--slate);font-size:.85rem;">Home</a>
+    <a href="login.html" style="color:var(--slate);font-size:.85rem;">Login</a>
+    <a href="signup.html" style="color:var(--slate);font-size:.85rem;">Sign Up</a>
+  </div>
+</footer>
+
+</body>
+</html>

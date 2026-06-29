@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — PrepIQ</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .dash-wrap { padding: 90px 5vw 4rem; max-width: 1100px; margin: 0 auto; }
+
+    /* Greeting */
+    .greeting { margin-bottom: 2.5rem; }
+    .greeting h1 {
+      font-family: var(--font-display); font-size: clamp(1.8rem,4vw,2.6rem);
+      font-weight: 800; letter-spacing: -.5px; margin-bottom: .3rem;
+    }
+    .greeting p { color: var(--slate2); }
+
+    /* Ready card — the hero element */
+    .ready-card {
+      background: linear-gradient(135deg, #1a2d5a 0%, #162236 60%, #0D1B2A 100%);
+      border: 1px solid rgba(67,97,238,0.35);
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      position: relative; overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .ready-card .orb {
+      width: 320px; height: 320px;
+      top: -80px; right: -60px;
+    }
+    .ready-badge { margin-bottom: 1rem; }
+    .ready-card h2 {
+      font-family: var(--font-display); font-size: clamp(1.6rem,3.5vw,2.2rem);
+      font-weight: 800; letter-spacing: -.5px; margin-bottom: .6rem;
+    }
+    .ready-card p { color: var(--slate2); max-width: 500px; margin-bottom: 1.75rem; line-height:1.7; }
+    .ready-meta {
+      display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .meta-item {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .85rem; color: var(--slate2);
+    }
+    .meta-item .meta-icon { font-size: 1rem; }
+    .meta-item strong { color: var(--white); }
+
+    /* Stats row */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius); padding: 1.4rem;
+    }
+    .stat-card .stat-icon { font-size: 1.4rem; margin-bottom: .6rem; }
+    .stat-card .stat-val {
+      font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; line-height:1;
+    }
+    .stat-card .stat-lbl { font-size: .8rem; color: var(--slate); margin-top: .25rem; }
+
+    /* Past sessions */
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .section-head h3 { font-family:var(--font-display); font-size:1.1rem; font-weight:700; }
+
+    .sessions-list { display: flex; flex-direction: column; gap: .75rem; }
+    .session-item {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius); padding: 1.25rem 1.5rem;
+      display: flex; align-items: center; gap: 1.25rem;
+    }
+    .session-score {
+      font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
+      width: 56px; text-align: center; flex-shrink: 0;
+    }
+    .session-info { flex: 1; }
+    .session-info h4 { font-size: .95rem; font-weight: 600; margin-bottom: .2rem; }
+    .session-info p  { font-size: .8rem; color: var(--slate); }
+    .session-actions { display: flex; gap: .5rem; }
+
+    .empty-state {
+      text-align: center; padding: 3rem;
+      background: var(--card); border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+    }
+    .empty-state .es-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+    .empty-state h4 { font-family: var(--font-display); font-weight:700; margin-bottom:.4rem; }
+    .empty-state p { color: var(--slate2); font-size:.9rem; }
+
+    /* Profile sidebar */
+    .dash-grid { display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem; }
+    .profile-card { background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:1.5rem; }
+    .profile-avatar {
+      width:56px;height:56px;border-radius:50%;
+      background: linear-gradient(135deg, var(--indigo), var(--mint));
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.4rem;font-weight:800;font-family:var(--font-display);
+      margin-bottom:1rem;
+    }
+    .profile-card h3 { font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:.15rem; }
+    .profile-card .email { font-size:.82rem;color:var(--slate);margin-bottom:1rem; }
+    .profile-detail { display:flex;flex-direction:column;gap:.6rem;margin-top:1rem; }
+    .pd-row { display:flex;align-items:flex-start;gap:.6rem;font-size:.82rem; }
+    .pd-row .pd-icon { font-size:.9rem;flex-shrink:0;padding-top:.05rem; }
+    .pd-row .pd-val { color:var(--slate2); }
+    .pd-row .pd-val strong { color:var(--white); display:block; }
+
+    @media(max-width:900px) { .dash-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Prep<span>IQ</span></a>
+  <div class="nav-links">
+    <span id="navName" style="color:var(--slate2);font-size:.9rem;"></span>
+    <button onclick="logout()" class="btn btn-outline btn-sm">Log out</button>
+  </div>
+</nav>
+
+<div class="dash-wrap">
+
+  <!-- GREETING -->
+  <div class="greeting">
+    <h1>Hey, <span id="greetName">there</span> 👋</h1>
+    <p id="greetSub">Ready to sharpen your interview skills today?</p>
+  </div>
+
+  <div class="dash-grid">
+    <div>
+
+      <!-- READY CARD -->
+      <div class="ready-card">
+        <div class="orb orb-indigo"></div>
+        <div class="ready-badge">
+          <span class="badge badge-mint">✨ AI Mock Interview</span>
+        </div>
+        <h2>Ready to take your interview?</h2>
+        <p>Your Gemini-powered interviewer is all set with questions tailored to your profile, domain, and experience level. Each session is unique.</p>
+        <div class="ready-meta" id="profileMeta">
+          <div class="meta-item"><span class="meta-icon">🎯</span><span>Loading profile…</span></div>
+        </div>
+        <a href="interview.html" class="btn btn-mint btn-lg">
+          🎙️ &nbsp;Click here to start interview
+        </a>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">🗂️</div>
+          <div class="stat-val" id="totalSessions">—</div>
+          <div class="stat-lbl">Total Interviews</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-val" id="avgScore">—</div>
+          <div class="stat-lbl">Avg. Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-val" id="bestScore">—</div>
+          <div class="stat-lbl">Best Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-val" id="lastSession">—</div>
+          <div class="stat-lbl">Days Since Last</div>
+        </div>
+      </div>
+
+      <!-- PAST SESSIONS -->
+      <div class="section-head">
+        <h3>Past Interview Sessions</h3>
+        <span class="badge badge-indigo" id="sessionCount">0 sessions</span>
+      </div>
+      <div class="sessions-list" id="sessionsList">
+        <div class="empty-state">
+          <div class="es-icon">🎙️</div>
+          <h4>No interviews yet</h4>
+          <p>Click "Start interview" above to take your first AI mock interview.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PROFILE SIDEBAR -->
+    <div>
+      <div class="profile-card">
+        <div class="profile-avatar" id="profileAvatar">?</div>
+        <h3 id="profileName">Loading…</h3>
+        <p class="email" id="profileEmail">—</p>
+        <div class="divider"></div>
+        <div class="profile-detail" id="profileDetail">
+          <div class="pd-row"><span class="pd-icon">⏳</span><span class="pd-val">Loading profile…</span></div>
+        </div>
+        <div style="margin-top:1.25rem;">
+          <a href="profile-setup.html" class="btn btn-outline btn-sm btn-full">Edit Profile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const API = 'http://localhost:8000';
+
+  function logout() {
+    localStorage.removeItem('prepiq_token');
+    localStorage.removeItem('prepiq_user');
+    window.location.href = 'login.html';
+  }
+
+  function scoreColor(s) {
+    if (s >= 80) return 'var(--mint)';
+    if (s >= 60) return 'var(--warn)';
+    return 'var(--error)';
+  }
+
+  async function loadDashboard() {
+    const token = localStorage.getItem('prepiq_token');
+    if (!token) { window.location.href = 'login.html'; return; }
+
+    // Local user for immediate display
+    const localUser = JSON.parse(localStorage.getItem('prepiq_user') || '{}');
+    const firstName = localUser.first_name || 'there';
+    document.getElementById('greetName').textContent = firstName;
+    document.getElementById('navName').textContent = firstName;
+    document.getElementById('profileAvatar').textContent = firstName[0]?.toUpperCase() || '?';
+    document.getElementById('profileName').textContent = `${localUser.first_name || ''} ${localUser.last_name || ''}`.trim() || '—';
+    document.getElementById('profileEmail').textContent = localUser.email || '—';
+
+    try {
+      // Fetch full profile
+      const profileRes = await fetch(`${API}/profile/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!profileRes.ok) { if (profileRes.status === 401) logout(); return; }
+      const profile = await profileRes.json();
+
+      // Meta row on ready card
+      const domains = profile.domains?.join(', ') || '—';
+      document.getElementById('profileMeta').innerHTML = `
+        <div class="meta-item"><span class="meta-icon">🎯</span><span><strong>${domains}</strong></span></div>
+        <div class="meta-item"><span class="meta-icon">💼</span><span><strong>${profile.current_status || '—'}</strong></span></div>
+        <div class="meta-item"><span class="meta-icon">📆</span><span><strong>${profile.experience_years ?? 0} yrs exp</strong></span></div>
+      `;
+
+      // Profile detail sidebar
+      document.getElementById('profileDetail').innerHTML = `
+        <div class="pd-row"><span class="pd-icon">🏫</span><span class="pd-val"><strong>${profile.college || '—'}</strong> ${profile.college_city || ''}</span></div>
+        <div class="pd-row"><span class="pd-icon">🎓</span><span class="pd-val"><strong>${profile.degree_level || '—'}</strong> — ${profile.field_of_study || '—'}</span></div>
+        <div class="pd-row"><span class="pd-icon">📅</span><span class="pd-val"><strong>Class of ${profile.grad_year || '—'}</strong></span></div>
+        <div class="pd-row"><span class="pd-icon">💼</span><span class="pd-val"><strong>${profile.current_status || '—'}</strong></span></div>
+        <div class="pd-row"><span class="pd-icon">🎯</span><span class="pd-val">${(profile.domains || []).map(d=>`<span class="badge badge-indigo" style="margin:.15rem .15rem 0 0;">${d}</span>`).join('')}</span></div>
+        <div class="pd-row"><span class="pd-icon">📄</span><span class="pd-val">${profile.resume_filename ? `<strong>✓ ${profile.resume_filename}</strong>` : '<span style="color:var(--warn)">No resume uploaded</span>'}</span></div>
+      `;
+
+      // Sessions
+      const sessRes = await fetch(`${API}/interview/sessions`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const sessions = sessRes.ok ? await sessRes.json() : [];
+
+      document.getElementById('sessionCount').textContent = `${sessions.length} session${sessions.length !== 1 ? 's' : ''}`;
+      document.getElementById('totalSessions').textContent = sessions.length;
+
+      if (sessions.length > 0) {
+        const scores = sessions.map(s => s.score ?? 0);
+        const avg = Math.round(scores.reduce((a,b) => a+b, 0) / scores.length);
+        const best = Math.max(...scores);
+        document.getElementById('avgScore').textContent = avg + '%';
+        document.getElementById('bestScore').textContent = best + '%';
+        const last = new Date(sessions[0].completed_at);
+        const diff = Math.floor((Date.now() - last) / 86400000);
+        document.getElementById('lastSession').textContent = diff === 0 ? 'Today' : `${diff}d`;
+
+        document.getElementById('sessionsList').innerHTML = sessions.slice(0, 6).map(s => {
+          const date = new Date(s.completed_at).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
+          return `
+            <div class="session-item">
+              <div class="session-score" style="color:${scoreColor(s.score ?? 0)}">${s.score ?? '—'}%</div>
+              <div class="session-info">
+                <h4>${s.domain || 'General'} Interview</h4>
+                <p>${date} · ${s.question_count || '?'} questions · ${s.duration_minutes || '?'} min</p>
+              </div>
+              <div class="session-actions">
+                <a href="feedback.html?session=${s._id}" class="btn btn-outline btn-sm">View Report</a>
+              </div>
+            </div>`;
+        }).join('');
+      } else {
+        document.getElementById('avgScore').textContent  = '—';
+        document.getElementById('bestScore').textContent = '—';
+        document.getElementById('lastSession').textContent = '—';
+      }
+
+    } catch (e) {
+      console.error('Dashboard error:', e);
+    }
+  }
+
+  loadDashboard();
+</script>
+</body>
+</html>

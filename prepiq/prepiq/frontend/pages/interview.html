@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview — PrepIQ</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body { display:flex; flex-direction:column; min-height:100vh; }
+
+    /* ── PHASES ─────────────────────────────────────────── */
+    .phase { display:none; }
+    .phase.active { display:flex; flex-direction:column; flex:1; }
+
+    /* ── INSTRUCTIONS PHASE ─────────────────────────────── */
+    #phaseInstructions {
+      align-items:center; justify-content:center;
+      padding:90px 5vw 3rem; text-align:center;
+    }
+    .inst-card {
+      width:100%; max-width:640px;
+      background:var(--card); border:1px solid rgba(255,255,255,0.08);
+      border-radius:var(--radius-lg); padding:2.75rem;
+      box-shadow:var(--shadow);
+    }
+    .inst-icon { font-size:3rem; margin-bottom:1rem; }
+    .inst-card h1 {
+      font-family:var(--font-display); font-size:1.8rem;
+      font-weight:800; letter-spacing:-.5px; margin-bottom:.5rem;
+    }
+    .inst-card .sub { color:var(--slate2); margin-bottom:2rem; font-size:.95rem; }
+
+    .rules-list { text-align:left; list-style:none; display:flex; flex-direction:column; gap:.9rem; margin-bottom:2rem; }
+    .rules-list li {
+      display:flex; align-items:flex-start; gap:.85rem;
+      background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
+      border-radius:var(--radius-sm); padding:.85rem 1rem;
+      font-size:.9rem; color:var(--slate2); line-height:1.55;
+    }
+    .rules-list li .ri { font-size:1.1rem; flex-shrink:0; }
+
+    .inst-meta {
+      display:flex; gap:1.25rem; justify-content:center; flex-wrap:wrap;
+      margin-bottom:2rem;
+    }
+    .im-chip {
+      display:flex; align-items:center; gap:.5rem;
+      background:rgba(67,97,238,0.1); border:1px solid rgba(67,97,238,0.25);
+      border-radius:50px; padding:.35rem .9rem; font-size:.82rem; color:var(--indigo-light);
+    }
+
+    .countdown {
+      font-size:.82rem; color:var(--slate);
+      margin-bottom:1rem; min-height:1.2rem;
+    }
+
+    /* ── INTERVIEW PHASE ────────────────────────────────── */
+    #phaseInterview { padding-top:68px; }
+
+    .int-header {
+      padding: .75rem 5vw;
+      background:rgba(13,27,42,0.9); backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,0.06);
+      display:flex; align-items:center; gap:1.5rem;
+    }
+    .int-header .logo { font-family:var(--font-display);font-weight:800;font-size:1.1rem; }
+    .int-header .logo span { color:var(--indigo); }
+    .int-progress-wrap { flex:1; }
+    .int-progress-label { font-size:.75rem; color:var(--slate); margin-bottom:.3rem; }
+    .timer-pill {
+      display:flex; align-items:center; gap:.4rem;
+      background:var(--card); border:1px solid rgba(255,255,255,0.1);
+      border-radius:50px; padding:.35rem .85rem; font-size:.85rem; font-weight:600;
+    }
+    .timer-pill.warn { color:var(--error); border-color:rgba(239,71,111,0.4); }
+
+    .int-body {
+      flex:1; display:grid; grid-template-columns:1fr 340px;
+      max-width:1100px; margin:0 auto; padding:2rem 5vw; gap:1.5rem;
+      width:100%;
+    }
+
+    /* Question panel */
+    .q-panel {
+      display:flex; flex-direction:column; gap:1.25rem;
+    }
+    .q-counter { font-size:.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--slate); }
+    .q-box {
+      background:var(--card); border:1px solid rgba(255,255,255,0.08);
+      border-radius:var(--radius); padding:1.75rem;
+    }
+    .q-text {
+      font-family:var(--font-display); font-size:1.2rem; font-weight:600;
+      line-height:1.55; margin-bottom:1.25rem; min-height:80px;
+    }
+    .q-type-badge { margin-bottom:.75rem; }
+
+    .ans-textarea {
+      background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.1);
+      border-radius:var(--radius-sm); color:var(--white);
+      font-family:var(--font-body); font-size:.95rem;
+      padding:1rem; width:100%; resize:none; height:180px;
+      transition:border-color .2s, box-shadow .2s;
+    }
+    .ans-textarea:focus { outline:none; border-color:var(--indigo); box-shadow:0 0 0 3px rgba(67,97,238,0.15); }
+    .ans-textarea::placeholder { color:var(--slate); }
+
+    .q-actions { display:flex; justify-content:space-between; align-items:center; margin-top:1rem; }
+    .char-count { font-size:.78rem; color:var(--slate); }
+
+    /* Side panel */
+    .side-panel { display:flex; flex-direction:column; gap:1rem; }
+    .side-card { background:var(--card); border:1px solid rgba(255,255,255,0.07); border-radius:var(--radius); padding:1.25rem; }
+    .side-card h4 { font-family:var(--font-display); font-size:.9rem; font-weight:700; margin-bottom:.75rem; color:var(--slate2); letter-spacing:.03em; text-transform:uppercase; font-size:.75rem; }
+
+    .q-map { display:flex; flex-wrap:wrap; gap:.4rem; }
+    .qm-dot {
+      width:32px; height:32px; border-radius:var(--radius-sm);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.75rem; font-weight:600; cursor:pointer;
+      background:rgba(255,255,255,0.06); color:var(--slate);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+    .qm-dot.answered { background:rgba(6,214,160,0.15); color:var(--mint); border-color:rgba(6,214,160,0.3); }
+    .qm-dot.current  { background:var(--indigo); color:var(--white); border-color:var(--indigo); }
+    .qm-dot.skipped  { background:rgba(255,209,102,0.1); color:var(--warn); border-color:rgba(255,209,102,0.3); }
+
+    /* Loading overlay */
+    .q-loading { text-align:center; padding:2.5rem; color:var(--slate2); }
+    .q-loading .spinner { width:32px;height:32px;border-width:3px; margin:0 auto 1rem; }
+
+    /* Finish phase */
+    #phaseFinish {
+      align-items:center; justify-content:center;
+      padding:90px 5vw 3rem; text-align:center;
+    }
+    .finish-card {
+      width:100%;max-width:520px;
+      background:var(--card);border:1px solid rgba(255,255,255,0.08);
+      border-radius:var(--radius-lg);padding:2.75rem;
+    }
+    .finish-icon { font-size:3rem;margin-bottom:1rem; }
+    .finish-card h2 { font-family:var(--font-display);font-size:1.8rem;font-weight:800;letter-spacing:-.5px;margin-bottom:.5rem; }
+    .finish-card p { color:var(--slate2);margin-bottom:1.5rem; }
+
+    @media(max-width:768px){
+      .int-body { grid-template-columns:1fr; }
+      .side-panel { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════ PHASE 1: INSTRUCTIONS ══════ -->
+<div class="phase active" id="phaseInstructions">
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Prep<span>IQ</span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="btn btn-outline btn-sm">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="inst-card">
+    <div class="inst-icon">🎙️</div>
+    <h1>Before you begin</h1>
+    <p class="sub" id="instSubtitle">Preparing your personalised interview…</p>
+
+    <div class="inst-meta" id="instMeta">
+      <div class="im-chip"><span>⏱️</span> Loading…</div>
+    </div>
+
+    <ul class="rules-list">
+      <li><span class="ri">🤫</span> Find a quiet place with minimal distractions. This interview is timed.</li>
+      <li><span class="ri">✍️</span> Type your answers clearly. The AI evaluates both content and clarity of expression.</li>
+      <li><span class="ri">⏭️</span> You can skip a question and return to it, but try to answer every one.</li>
+      <li><span class="ri">🚫</span> Do not refresh or close this tab — your session will be lost.</li>
+      <li><span class="ri">📋</span> Your answers are auto-saved. Results are shown immediately when you finish.</li>
+      <li><span class="ri">🔄</span> You can retake this interview anytime — fresh questions every time.</li>
+    </ul>
+
+    <p class="countdown" id="countdownText"></p>
+    <button class="btn btn-mint btn-lg" id="startBtn" onclick="beginInterview()" disabled>
+      <span class="spinner" id="startSpinner"></span>
+      <span id="startBtnText">Preparing interview…</span>
+    </button>
+    <p style="margin-top:1rem;font-size:.8rem;color:var(--slate);">
+      <a href="dashboard.html" style="color:var(--slate);text-decoration:underline;">Cancel and go back</a>
+    </p>
+  </div>
+</div>
+
+<!-- ══════ PHASE 2: INTERVIEW ══════ -->
+<div class="phase" id="phaseInterview">
+  <div class="int-header">
+    <div class="logo">Prep<span>IQ</span></div>
+    <div class="int-progress-wrap">
+      <div class="int-progress-label">Question <span id="qCurrent">1</span> of <span id="qTotal">10</span></div>
+      <div class="progress-bar-wrap"><div class="progress-bar" id="intProgress" style="width:10%"></div></div>
+    </div>
+    <div class="timer-pill" id="timerPill">⏱️ <span id="timerDisplay">00:00</span></div>
+    <button onclick="confirmFinish()" class="btn btn-outline btn-sm">Finish Early</button>
+  </div>
+
+  <div class="int-body">
+    <!-- Question panel -->
+    <div class="q-panel">
+      <div class="q-loading" id="qLoading">
+        <div class="spinner"></div>
+        <p>The AI is crafting your next question…</p>
+      </div>
+
+      <div id="qContent" style="display:none;">
+        <div class="q-counter" id="qCounterLabel">Question 1 / 10</div>
+        <div class="q-box">
+          <div class="q-type-badge">
+            <span class="badge badge-indigo" id="qType">—</span>
+          </div>
+          <div class="q-text" id="qText">—</div>
+          <textarea class="ans-textarea" id="answerInput"
+            placeholder="Type your answer here…"
+            oninput="updateCharCount()"></textarea>
+          <div class="q-actions">
+            <span class="char-count" id="charCount">0 / 2000</span>
+            <div style="display:flex;gap:.75rem;">
+              <button class="btn btn-outline btn-sm" onclick="skipQuestion()">Skip</button>
+              <button class="btn btn-primary btn-sm" onclick="submitAnswer()">
+                <span id="submitBtnText">Next →</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side panel -->
+    <div class="side-panel">
+      <div class="side-card">
+        <h4>Question Map</h4>
+        <div class="q-map" id="qMap"></div>
+      </div>
+      <div class="side-card">
+        <h4>Tips</h4>
+        <p style="font-size:.82rem;color:var(--slate2);line-height:1.65;" id="tipText">
+          Structure your answers using the STAR method (Situation, Task, Action, Result) for behavioural questions.
+        </p>
+      </div>
+      <div class="side-card">
+        <h4>Your Domain</h4>
+        <p style="font-size:.82rem;color:var(--slate2);" id="domainDisplay">—</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PHASE 3: FINISH ══════ -->
+<div class="phase" id="phaseFinish">
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Prep<span>IQ</span></a>
+  </nav>
+  <div class="finish-card">
+    <div class="finish-icon">🎉</div>
+    <h2>Interview complete!</h2>
+    <p>Great job finishing your session. We're analysing your responses now — your feedback report will be ready in a moment.</p>
+    <div style="display:flex;flex-direction:column;gap:.75rem;">
+      <button class="btn btn-mint btn-lg btn-full" id="viewFeedbackBtn" onclick="goToFeedback()">
+        <span class="spinner" id="feedbackSpinner"></span> View My Feedback →
+      </button>
+      <a href="dashboard.html" class="btn btn-outline btn-full">Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8000';
+  const token = localStorage.getItem('prepiq_token');
+  if (!token) window.location.href = 'login.html';
+
+  let questions = [];
+  let answers   = [];
+  let currentQ  = 0;
+  let sessionId = null;
+  let timerInterval = null;
+  let elapsedSeconds = 0;
+  const TIPS = [
+    'Use concrete examples from your experience whenever possible.',
+    'Keep answers focused — 2-3 minutes per answer is ideal.',
+    'For technical questions, think aloud before writing your final answer.',
+    'Use the STAR method for behavioural questions.',
+    'If unsure, explain your reasoning process — the AI evaluates thinking, not just answers.',
+  ];
+
+  // ── INIT ──────────────────────────────────────────────
+  async function init() {
+    try {
+      const profileRes = await fetch(`${API}/profile/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!profileRes.ok) { window.location.href = 'login.html'; return; }
+      const profile = await profileRes.json();
+
+      const domain = (profile.domains || ['General'])[0];
+      document.getElementById('instSubtitle').textContent =
+        `${domain} interview · Tailored to your experience`;
+      document.getElementById('domainDisplay').textContent = domain;
+
+      // Start session on backend
+      const sessRes = await fetch(`${API}/interview/start`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+      });
+      const sessData = await sessRes.json();
+      if (!sessRes.ok) throw new Error(sessData.detail || 'Failed to start session.');
+
+      sessionId = sessData.session_id;
+      questions = sessData.questions;
+      answers = new Array(questions.length).fill('');
+
+      document.getElementById('instMeta').innerHTML = `
+        <div class="im-chip"><span>❓</span> ${questions.length} questions</div>
+        <div class="im-chip"><span>🎯</span> ${domain}</div>
+        <div class="im-chip"><span>⏱️</span> ~${Math.round(questions.length * 3)} minutes</div>
+        <div class="im-chip"><span>💼</span> ${profile.current_status || 'General'}</div>
+      `;
+
+      // Countdown
+      let c = 5;
+      const spinner = document.getElementById('startSpinner');
+      const btnText = document.getElementById('startBtnText');
+      spinner.style.display = 'none';
+      btnText.textContent = `Start Interview (${c})`;
+      const cd = setInterval(() => {
+        c--;
+        if (c <= 0) {
+          clearInterval(cd);
+          document.getElementById('startBtn').disabled = false;
+          btnText.textContent = 'Start Interview →';
+          document.getElementById('countdownText').textContent = '';
+        } else {
+          btnText.textContent = `Start Interview (${c})`;
+        }
+      }, 1000);
+
+    } catch (e) {
+      document.getElementById('instSubtitle').textContent = 'Error: ' + e.message;
+    }
+  }
+
+  // ── BEGIN ──────────────────────────────────────────────
+  function beginInterview() {
+    showPhase('phaseInterview');
+    buildQMap();
+    startTimer();
+    loadQuestion(0);
+  }
+
+  function showPhase(id) {
+    document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      elapsedSeconds++;
+      const m = String(Math.floor(elapsedSeconds / 60)).padStart(2,'0');
+      const s = String(elapsedSeconds % 60).padStart(2,'0');
+      document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
+  function buildQMap() {
+    const map = document.getElementById('qMap');
+    map.innerHTML = '';
+    questions.forEach((_,i) => {
+      const d = document.createElement('div');
+      d.className = 'qm-dot' + (i===0?' current':'');
+      d.textContent = i+1;
+      d.onclick = () => jumpTo(i);
+      map.appendChild(d);
+    });
+  }
+
+  function updateQMap() {
+    const dots = document.querySelectorAll('.qm-dot');
+    dots.forEach((d,i) => {
+      d.className = 'qm-dot';
+      if (answers[i] && answers[i] !== '__SKIP__') d.classList.add('answered');
+      else if (answers[i] === '__SKIP__') d.classList.add('skipped');
+      if (i === currentQ) d.classList.add('current');
+    });
+  }
+
+  function loadQuestion(idx) {
+    currentQ = idx;
+    const q = questions[idx];
+
+    document.getElementById('qLoading').style.display = 'none';
+    document.getElementById('qContent').style.display = 'block';
+
+    document.getElementById('qCurrent').textContent = idx+1;
+    document.getElementById('qTotal').textContent = questions.length;
+    document.getElementById('qCounterLabel').textContent = `Question ${idx+1} / ${questions.length}`;
+    document.getElementById('intProgress').style.width = `${((idx+1)/questions.length)*100}%`;
+
+    document.getElementById('qType').textContent  = q.type || 'General';
+    document.getElementById('qText').textContent  = q.question;
+    document.getElementById('answerInput').value  = answers[idx] === '__SKIP__' ? '' : (answers[idx] || '');
+    document.getElementById('submitBtnText').textContent = idx === questions.length-1 ? 'Finish ✓' : 'Next →';
+    document.getElementById('tipText').textContent = TIPS[idx % TIPS.length];
+
+    updateCharCount();
+    updateQMap();
+  }
+
+  function updateCharCount() {
+    const v = document.getElementById('answerInput').value.length;
+    document.getElementById('charCount').textContent = `${v} / 2000`;
+  }
+
+  function submitAnswer() {
+    const ans = document.getElementById('answerInput').value.trim();
+    answers[currentQ] = ans || '__SKIP__';
+    if (currentQ < questions.length - 1) {
+      loadQuestion(currentQ + 1);
+    } else {
+      finishInterview();
+    }
+  }
+
+  function skipQuestion() {
+    answers[currentQ] = '__SKIP__';
+    if (currentQ < questions.length - 1) loadQuestion(currentQ + 1);
+    else finishInterview();
+  }
+
+  function jumpTo(idx) { loadQuestion(idx); }
+
+  function confirmFinish() {
+    if (confirm('Finish the interview now? Unanswered questions will be marked as skipped.')) {
+      finishInterview();
+    }
+  }
+
+  async function finishInterview() {
+    clearInterval(timerInterval);
+    showPhase('phaseFinish');
+
+    const payload = {
+      session_id: sessionId,
+      answers: questions.map((q,i) => ({
+        question_id: q.id,
+        answer: answers[i] === '__SKIP__' ? '' : (answers[i] || ''),
+        skipped: answers[i] === '__SKIP__'
+      })),
+      duration_seconds: elapsedSeconds
+    };
+
+    try {
+      const res = await fetch(`${API}/interview/submit`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        sessionId = data.session_id || sessionId;
+        document.getElementById('feedbackSpinner').style.display = 'none';
+        document.getElementById('viewFeedbackBtn').innerHTML = 'View My Feedback →';
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function goToFeedback() {
+    window.location.href = `feedback.html?session=${sessionId}`;
+  }
+
+  init();
+</script>
+</body>
+</html>

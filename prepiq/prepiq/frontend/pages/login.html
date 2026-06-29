@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log In — PrepIQ</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    .auth-wrap {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 6rem 5vw 3rem;
+      position: relative; overflow: hidden;
+    }
+    .orb-a { width: 500px; height: 500px; top: -100px; left: -200px; }
+    .orb-b { width: 350px; height: 350px; bottom: -80px; right: -100px; }
+
+    .auth-card {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 440px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+    .auth-logo {
+      font-family: var(--font-display); font-weight: 800; font-size: 1.4rem;
+      margin-bottom: 2rem; display: block;
+    }
+    .auth-logo span { color: var(--indigo); }
+
+    .auth-title {
+      font-family: var(--font-display); font-size: 1.6rem; font-weight: 800;
+      letter-spacing: -0.5px; margin-bottom: .4rem;
+    }
+    .auth-sub { color: var(--slate2); font-size: .9rem; margin-bottom: 1.75rem; }
+
+    .forgot-link {
+      font-size: .82rem; color: var(--indigo-light);
+      text-align: right; display: block; margin-top: -.5rem; margin-bottom: 1rem;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+
+    .auth-footer { text-align: center; margin-top: 1.5rem; font-size: .88rem; color: var(--slate2); }
+    .auth-footer a { color: var(--indigo-light); font-weight: 600; }
+    .auth-footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Prep<span>IQ</span></a>
+  <div class="nav-links">
+    <a href="index.html" class="hide-mobile">Home</a>
+    <a href="about.html" class="hide-mobile">About</a>
+    <a href="signup.html" class="nav-cta">Sign Up</a>
+  </div>
+</nav>
+
+<div class="auth-wrap">
+  <div class="orb orb-indigo orb-a"></div>
+  <div class="orb orb-mint orb-b"></div>
+
+  <div class="auth-card">
+    <a href="index.html" class="auth-logo">Prep<span>IQ</span></a>
+
+    <h1 class="auth-title">Welcome back.</h1>
+    <p class="auth-sub">Log in to continue your interview prep.</p>
+
+    <div class="alert alert-error" id="loginError"></div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" id="loginEmail" placeholder="you@example.com" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" />
+    </div>
+
+    <a href="#" class="forgot-link">Forgot password?</a>
+
+    <button class="btn btn-primary btn-full btn-lg" id="loginBtn" onclick="handleLogin()">
+      Log In
+    </button>
+
+    <div class="divider-text" style="margin:1.5rem 0;">or</div>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="signup.html">Create one free →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8000';
+
+  async function handleLogin() {
+    const btn = document.getElementById('loginBtn');
+    const errBox = document.getElementById('loginError');
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass  = document.getElementById('loginPassword').value;
+
+    errBox.classList.remove('show');
+
+    if (!email || !pass) {
+      errBox.textContent = 'Please fill in all fields.';
+      errBox.classList.add('show');
+      return;
+    }
+
+    btn.innerHTML = '<span class="spinner"></span> Logging in…';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass })
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.detail || 'Login failed.');
+
+      localStorage.setItem('prepiq_token', data.access_token);
+      localStorage.setItem('prepiq_user', JSON.stringify(data.user));
+
+      // Redirect based on profile completion
+      if (data.user.profile_complete) {
+        window.location.href = 'dashboard.html';
+      } else {
+        window.location.href = 'profile-setup.html';
+      }
+    } catch (err) {
+      errBox.textContent = err.message;
+      errBox.classList.add('show');
+      btn.innerHTML = 'Log In';
+      btn.disabled = false;
+    }
+  }
+
+  // Enter key
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+
+  // Already logged in?
+  if (localStorage.getItem('prepiq_token')) window.location.href = 'dashboard.html';
+</script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build Your Profile — PrepIQ</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body { display:flex; flex-direction:column; min-height:100vh; }
+
+    .setup-wrap {
+      flex:1; display:flex; align-items:flex-start; justify-content:center;
+      padding: 90px 5vw 4rem;
+    }
+    .setup-box {
+      width:100%; max-width:600px;
+    }
+
+    /* Header */
+    .setup-header { margin-bottom: 2.5rem; }
+    .step-counter {
+      font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--slate);margin-bottom:.75rem;
+    }
+    .setup-header h1 {
+      font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.2rem);
+      font-weight:800;letter-spacing:-.5px;margin-bottom:.5rem;
+    }
+    .setup-header p { color:var(--slate2);font-size:.95rem; }
+
+    /* Progress */
+    .setup-progress { margin-bottom:2.5rem; }
+    .progress-dots { display:flex;gap:.5rem;margin-top:.6rem; }
+    .pdot {
+      height:4px;flex:1;border-radius:4px;
+      background:rgba(255,255,255,0.1);transition:background .3s;
+    }
+    .pdot.done { background:var(--mint); }
+    .pdot.active { background:var(--indigo); }
+
+    /* Step panels */
+    .step-panel { display:none; }
+    .step-panel.active { display:block; }
+
+    /* Domain chips */
+    .chip-group { display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.5rem; }
+
+    /* File upload */
+    .upload-zone {
+      border: 2px dashed rgba(255,255,255,0.15);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      text-align:center;
+      cursor:pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .upload-zone:hover, .upload-zone.drag { border-color:var(--indigo); background:rgba(67,97,238,0.05); }
+    .upload-icon { font-size:2rem;margin-bottom:.75rem; }
+    .upload-zone h4 { font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:.25rem; }
+    .upload-zone p { font-size:.85rem;color:var(--slate2); }
+    .upload-info { margin-top:.75rem;font-size:.8rem;color:var(--slate); }
+    .file-chosen { font-size:.85rem;color:var(--mint);margin-top:.75rem;display:none; }
+
+    /* Navigation */
+    .step-nav {
+      display:flex;justify-content:space-between;align-items:center;
+      margin-top:2rem;gap:1rem;
+    }
+    .btn-back { background:transparent;color:var(--slate2);border:none;font-size:.9rem;cursor:pointer;font-family:var(--font-body); padding:0; }
+    .btn-back:hover { color:var(--white); }
+
+    .alert { margin-bottom:1rem; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Prep<span>IQ</span></a>
+  <div class="nav-links">
+    <span style="color:var(--slate);font-size:.85rem;">Setting up your profile…</span>
+  </div>
+</nav>
+
+<div class="setup-wrap">
+  <div class="setup-box">
+
+    <!-- Progress dots -->
+    <div class="setup-progress">
+      <div class="progress-dots" id="progressDots"></div>
+    </div>
+
+    <div class="alert alert-error" id="setupError"></div>
+
+    <!-- STEP 1: College -->
+    <div class="step-panel active" id="step-1">
+      <div class="setup-header">
+        <p class="step-counter">Step 1 of 7</p>
+        <h1>Which college are you from? 🏫</h1>
+        <p>Tell us about your academic background.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">College / University Name</label>
+        <input type="text" class="form-input" id="college" placeholder="e.g. Anna University, IIT Madras…" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">City</label>
+        <input type="text" class="form-input" id="collegeCity" placeholder="e.g. Chennai" />
+      </div>
+      <div class="step-nav">
+        <span></span>
+        <button class="btn btn-primary" onclick="nextStep(1)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Degree -->
+    <div class="step-panel" id="step-2">
+      <div class="setup-header">
+        <p class="step-counter">Step 2 of 7</p>
+        <h1>What's your degree? 🎓</h1>
+        <p>This helps us calibrate the depth of your interviews.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Degree Level</label>
+        <select class="form-select" id="degreeLevel">
+          <option value="">Select degree level</option>
+          <option>Bachelor's (B.E / B.Tech / B.Sc / BCA / BBA)</option>
+          <option>Master's (M.E / M.Tech / M.Sc / MCA / MBA)</option>
+          <option>Diploma</option>
+          <option>Ph.D / Research</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Field of Study / Specialisation</label>
+        <input type="text" class="form-input" id="fieldOfStudy" placeholder="e.g. Computer Science, Electronics, Commerce…" />
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="prevStep(2)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Graduation Year -->
+    <div class="step-panel" id="step-3">
+      <div class="setup-header">
+        <p class="step-counter">Step 3 of 7</p>
+        <h1>When did (or will) you graduate? 📅</h1>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Graduation Year</label>
+        <select class="form-select" id="gradYear"></select>
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="prevStep(3)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Current Status -->
+    <div class="step-panel" id="step-4">
+      <div class="setup-header">
+        <p class="step-counter">Step 4 of 7</p>
+        <h1>What's your current status? 💼</h1>
+        <p>This shapes the type and difficulty of your mock interview.</p>
+      </div>
+      <div class="chip-group" id="statusChips">
+        <div class="chip" onclick="selectStatus('student')">🎒 Student</div>
+        <div class="chip" onclick="selectStatus('fresher')">🌱 Fresher</div>
+        <div class="chip" onclick="selectStatus('experienced')">⭐ Experienced</div>
+      </div>
+      <input type="hidden" id="currentStatus" />
+      <div class="step-nav" style="margin-top:2.5rem;">
+        <button class="btn-back" onclick="prevStep(4)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(4)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: Domain -->
+    <div class="step-panel" id="step-5">
+      <div class="setup-header">
+        <p class="step-counter">Step 5 of 7</p>
+        <h1>What's your preferred domain? 🎯</h1>
+        <p>Pick up to 3 domains. Your AI interview will focus here.</p>
+      </div>
+      <div class="chip-group" id="domainChips">
+        <div class="chip" onclick="toggleDomain(this,'Software Engineering')">💻 Software Engineering</div>
+        <div class="chip" onclick="toggleDomain(this,'Data Science & ML')">📈 Data Science & ML</div>
+        <div class="chip" onclick="toggleDomain(this,'UI/UX Design')">🎨 UI/UX Design</div>
+        <div class="chip" onclick="toggleDomain(this,'Digital Marketing')">📣 Digital Marketing</div>
+        <div class="chip" onclick="toggleDomain(this,'Finance & Banking')">💰 Finance & Banking</div>
+        <div class="chip" onclick="toggleDomain(this,'Civil Engineering')">🏗️ Civil Engineering</div>
+        <div class="chip" onclick="toggleDomain(this,'Electrical Engineering')">⚡ Electrical Engineering</div>
+        <div class="chip" onclick="toggleDomain(this,'Biotech & Life Sciences')">🧬 Biotech & Life Sciences</div>
+        <div class="chip" onclick="toggleDomain(this,'Product Management')">📦 Product Management</div>
+        <div class="chip" onclick="toggleDomain(this,'Cybersecurity')">🔐 Cybersecurity</div>
+        <div class="chip" onclick="toggleDomain(this,'Cloud & DevOps')">☁️ Cloud & DevOps</div>
+        <div class="chip" onclick="toggleDomain(this,'HR & People Ops')">📋 HR & People Ops</div>
+      </div>
+      <div class="step-nav" style="margin-top:2.5rem;">
+        <button class="btn-back" onclick="prevStep(5)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(5)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 6: Experience -->
+    <div class="step-panel" id="step-6">
+      <div class="setup-header">
+        <p class="step-counter">Step 6 of 7</p>
+        <h1>Years of experience? 🧪</h1>
+        <p>Approximate is fine — this just calibrates question difficulty.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Years of Work Experience</label>
+        <select class="form-select" id="experience">
+          <option value="">Select range</option>
+          <option value="0">0 — No experience yet</option>
+          <option value="0.5">Less than 1 year</option>
+          <option value="1">1 year</option>
+          <option value="2">2 years</option>
+          <option value="3">3 years</option>
+          <option value="4">4 years</option>
+          <option value="5">5 years</option>
+          <option value="7">6–8 years</option>
+          <option value="10">9–12 years</option>
+          <option value="15">13+ years</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Current or Most Recent Role (optional)</label>
+        <input type="text" class="form-input" id="currentRole" placeholder="e.g. Junior Developer, Intern, Analyst…" />
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="prevStep(6)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(6)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 7: Resume Upload -->
+    <div class="step-panel" id="step-7">
+      <div class="setup-header">
+        <p class="step-counter">Step 7 of 7</p>
+        <h1>Upload your resume. 📄</h1>
+        <p>The AI reads your resume to personalise questions around your real experience.</p>
+      </div>
+
+      <div class="upload-zone" id="uploadZone"
+           onclick="document.getElementById('resumeFile').click()"
+           ondragover="handleDrag(event,true)"
+           ondragleave="handleDrag(event,false)"
+           ondrop="handleDrop(event)">
+        <div class="upload-icon">📎</div>
+        <h4>Drop your resume here</h4>
+        <p>or click to browse</p>
+        <p class="upload-info">PDF or DOCX · Max 5 MB</p>
+        <p class="file-chosen" id="fileChosen">✓ <span id="fileName"></span></p>
+      </div>
+      <input type="file" id="resumeFile" accept=".pdf,.docx" style="display:none" onchange="fileSelected(this)" />
+
+      <div style="margin-top:1rem;">
+        <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;font-size:.88rem;color:var(--slate2);">
+          <input type="checkbox" id="skipResume" style="width:16px;height:16px;accent-color:var(--indigo);" />
+          Skip for now — I'll upload later
+        </label>
+      </div>
+
+      <div class="step-nav" style="margin-top:2rem;">
+        <button class="btn-back" onclick="prevStep(7)">← Back</button>
+        <button class="btn btn-mint btn-lg" id="finishBtn" onclick="submitProfile()">
+          Finish & Go to Dashboard →
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8000';
+  const TOTAL_STEPS = 7;
+  let currentStep = 1;
+  let selectedDomains = [];
+  let selectedStatus = '';
+
+  // Build year dropdown
+  const yearSelect = document.getElementById('gradYear');
+  for (let y = 2030; y >= 1990; y--) {
+    const o = document.createElement('option');
+    o.value = y; o.textContent = y;
+    yearSelect.appendChild(o);
+  }
+  yearSelect.value = new Date().getFullYear();
+
+  // Build progress dots
+  function buildDots() {
+    const wrap = document.getElementById('progressDots');
+    wrap.innerHTML = '';
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const d = document.createElement('div');
+      d.className = 'pdot ' + (i < currentStep ? 'done' : i === currentStep ? 'active' : '');
+      wrap.appendChild(d);
+    }
+  }
+  buildDots();
+
+  function showStep(n) {
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`step-${n}`).classList.add('active');
+    currentStep = n; buildDots();
+    document.getElementById('setupError').classList.remove('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function showError(msg) {
+    const e = document.getElementById('setupError');
+    e.textContent = msg; e.classList.add('show');
+  }
+
+  function nextStep(from) {
+    if (!validate(from)) return;
+    if (from < TOTAL_STEPS) showStep(from + 1);
+  }
+  function prevStep(from) { if (from > 1) showStep(from - 1); }
+
+  function validate(step) {
+    if (step === 1) {
+      if (!document.getElementById('college').value.trim()) { showError('Please enter your college name.'); return false; }
+    }
+    if (step === 2) {
+      if (!document.getElementById('degreeLevel').value) { showError('Please select your degree level.'); return false; }
+      if (!document.getElementById('fieldOfStudy').value.trim()) { showError('Please enter your field of study.'); return false; }
+    }
+    if (step === 3) {
+      if (!document.getElementById('gradYear').value) { showError('Please select your graduation year.'); return false; }
+    }
+    if (step === 4) {
+      if (!selectedStatus) { showError('Please select your current status.'); return false; }
+    }
+    if (step === 5) {
+      if (selectedDomains.length === 0) { showError('Please select at least one domain.'); return false; }
+    }
+    if (step === 6) {
+      if (!document.getElementById('experience').value) { showError('Please select your experience range.'); return false; }
+    }
+    return true;
+  }
+
+  function selectStatus(val) {
+    selectedStatus = val;
+    document.getElementById('currentStatus').value = val;
+    document.querySelectorAll('#statusChips .chip').forEach(c => c.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+  }
+
+  function toggleDomain(el, domain) {
+    if (el.classList.contains('selected')) {
+      el.classList.remove('selected');
+      selectedDomains = selectedDomains.filter(d => d !== domain);
+    } else {
+      if (selectedDomains.length >= 3) { showError('You can select up to 3 domains.'); return; }
+      el.classList.add('selected');
+      selectedDomains.push(domain);
+    }
+    document.getElementById('setupError').classList.remove('show');
+  }
+
+  function handleDrag(e, over) {
+    e.preventDefault();
+    document.getElementById('uploadZone').classList.toggle('drag', over);
+  }
+  function handleDrop(e) {
+    e.preventDefault();
+    handleDrag(e, false);
+    const file = e.dataTransfer.files[0];
+    if (file) previewFile(file);
+  }
+  function fileSelected(input) { if (input.files[0]) previewFile(input.files[0]); }
+  function previewFile(file) {
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileChosen').style.display = 'block';
+  }
+
+  async function submitProfile() {
+    const skip = document.getElementById('skipResume').checked;
+    const file = document.getElementById('resumeFile').files[0];
+    if (!skip && !file) { showError('Please upload your resume or check "Skip for now".'); return; }
+
+    const btn = document.getElementById('finishBtn');
+    btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true;
+
+    const token = localStorage.getItem('prepiq_token');
+    if (!token) { window.location.href = 'login.html'; return; }
+
+    try {
+      const formData = new FormData();
+      formData.append('college', document.getElementById('college').value.trim());
+      formData.append('college_city', document.getElementById('collegeCity').value.trim());
+      formData.append('degree_level', document.getElementById('degreeLevel').value);
+      formData.append('field_of_study', document.getElementById('fieldOfStudy').value.trim());
+      formData.append('grad_year', document.getElementById('gradYear').value);
+      formData.append('current_status', selectedStatus);
+      formData.append('domains', JSON.stringify(selectedDomains));
+      formData.append('experience_years', document.getElementById('experience').value);
+      formData.append('current_role', document.getElementById('currentRole').value.trim());
+      if (file) formData.append('resume', file);
+
+      const res = await fetch(`${API}/profile/setup`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Failed to save profile.');
+
+      // Update local user
+      const user = JSON.parse(localStorage.getItem('prepiq_user') || '{}');
+      user.profile_complete = true;
+      localStorage.setItem('prepiq_user', JSON.stringify(user));
+
+      window.location.href = 'dashboard.html';
+    } catch (e) {
+      showError(e.message);
+      btn.innerHTML = 'Finish & Go to Dashboard →'; btn.disabled = false;
+    }
+  }
+
+  // Auth guard
+  if (!localStorage.getItem('prepiq_token')) window.location.href = 'login.html';
+</script>
+</body>
+</html>

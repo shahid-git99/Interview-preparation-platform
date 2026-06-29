@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PrepIQ — AI-Powered Interview Training</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .orb-1 { width: 600px; height: 600px; top: -100px; left: -150px; }
+    .orb-2 { width: 400px; height: 400px; bottom: 0; right: -80px; }
+
+    .hero-content {
+      position: relative; z-index: 1;
+      max-width: 680px;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(67,97,238,0.12);
+      border: 1px solid rgba(67,97,238,0.3);
+      border-radius: 50px; padding: .35rem 1rem;
+      font-size: .8rem; font-weight: 600; color: var(--indigo-light);
+      letter-spacing: .04em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--mint); animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 1.4rem;
+    }
+    .hero h1 .accent { color: var(--indigo); }
+    .hero h1 .accent-mint { color: var(--mint); }
+
+    .hero-sub {
+      font-size: 1.1rem; color: var(--slate2); max-width: 520px;
+      line-height: 1.75; margin-bottom: 2.2rem;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+
+    .hero-stats {
+      display: flex; gap: 2.5rem; flex-wrap: wrap;
+    }
+    .stat-item { display: flex; flex-direction: column; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 1.8rem; font-weight: 800; color: var(--white);
+      line-height: 1;
+    }
+    .stat-label { font-size: .78rem; color: var(--slate); margin-top: .25rem; }
+
+    /* ── FEATURES ──────────────────────────────────────── */
+    .features { padding: 6rem 0; }
+    .section-label {
+      font-size: .78rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--indigo-light);
+      margin-bottom: .75rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800; letter-spacing: -1px;
+      margin-bottom: 1rem;
+    }
+    .section-sub { color: var(--slate2); max-width: 480px; font-size: 1rem; line-height: 1.7; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem; margin-top: 3.5rem;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover { border-color: rgba(67,97,238,0.4); transform: translateY(-4px); }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 1.2rem;
+    }
+    .icon-indigo { background: rgba(67,97,238,0.15); }
+    .icon-mint   { background: rgba(6,214,160,0.12); }
+    .icon-warn   { background: rgba(255,209,102,0.12); }
+    .icon-pink   { background: rgba(239,71,111,0.12); }
+
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem;
+    }
+    .feature-card p { font-size: .9rem; color: var(--slate2); line-height: 1.65; }
+
+    /* ── DOMAINS ───────────────────────────────────────── */
+    .domains { padding: 4rem 0 6rem; }
+    .domain-pills {
+      display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2.5rem;
+    }
+    .domain-pill {
+      padding: .6rem 1.4rem;
+      border-radius: 50px;
+      font-size: .88rem; font-weight: 600;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      color: var(--slate2);
+      background: var(--card);
+      transition: all .2s; cursor: default;
+    }
+    .domain-pill:hover { border-color: var(--indigo); color: var(--white); }
+
+    /* ── HOW IT WORKS ──────────────────────────────────── */
+    .how { padding: 5rem 0; }
+    .steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0; margin-top: 3rem; position: relative;
+    }
+    .step { padding: 1.5rem; text-align: center; }
+    .step-num {
+      font-family: var(--font-display);
+      font-size: 2.5rem; font-weight: 800;
+      color: rgba(67,97,238,0.25); line-height: 1; margin-bottom: .75rem;
+    }
+    .step h4 {
+      font-family: var(--font-display);
+      font-size: 1rem; font-weight: 700; margin-bottom: .4rem;
+    }
+    .step p { font-size: .85rem; color: var(--slate2); line-height: 1.6; }
+
+    /* ── CTA BANNER ────────────────────────────────────── */
+    .cta-banner {
+      margin: 0 5vw 5rem;
+      background: linear-gradient(135deg, #1a2d5a 0%, #1a2d44 100%);
+      border: 1px solid rgba(67,97,238,0.3);
+      border-radius: var(--radius-lg);
+      padding: 4rem 5%;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-banner h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem,4vw,2.8rem); font-weight: 800;
+      letter-spacing: -1px; margin-bottom: .75rem;
+    }
+    .cta-banner p { color: var(--slate2); margin-bottom: 2rem; }
+
+    /* ── FOOTER ────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 2.5rem 5vw;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    footer p { color: var(--slate); font-size: .85rem; }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--slate); font-size: .85rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--white); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Prep<span>IQ</span></a>
+  <div class="nav-links">
+    <a href="index.html" class="active hide-mobile">Home</a>
+    <a href="about.html" class="hide-mobile">About</a>
+    <a href="login.html">Log in</a>
+    <a href="signup.html" class="nav-cta">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero pt-nav container">
+  <div class="hero-grid"></div>
+  <div class="orb orb-indigo orb-1"></div>
+  <div class="orb orb-mint orb-2"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="dot"></span> Powered by Gemini AI
+    </div>
+    <h1>
+      Ace your next<br>
+      <span class="accent">interview</span> with<br>
+      AI that <span class="accent-mint">knows</span> you.
+    </h1>
+    <p class="hero-sub">
+      PrepIQ builds a personalised mock interview from your profile — your domain,
+      your experience, your resume — then gives you brutally honest feedback to level up.
+    </p>
+    <div class="hero-actions">
+      <a href="signup.html" class="btn btn-primary btn-lg">Start for Free →</a>
+      <a href="about.html" class="btn btn-outline btn-lg">How it works</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">12+</span>
+        <span class="stat-label">Domains covered</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">AI</span>
+        <span class="stat-label">Personalised to you</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Practice anytime</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="container">
+    <p class="section-label">Why PrepIQ</p>
+    <h2 class="section-title">Everything you need to<br>land that offer.</h2>
+    <p class="section-sub">From profile-aware questions to post-interview reports, PrepIQ covers the full prep loop.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon icon-indigo">🧠</div>
+        <h3>Profile-Aware Questions</h3>
+        <p>Gemini reads your degree, domain, and experience level to generate questions that are actually relevant to you.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-mint">📊</div>
+        <h3>Detailed Feedback</h3>
+        <p>Every session ends with a structured report: strengths, weak spots, and specific things to work on next.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-warn">🎯</div>
+        <h3>Multi-Domain Support</h3>
+        <p>Software, Data Science, Marketing, Finance, Design and more — all with domain-specific question banks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-pink">🔄</div>
+        <h3>Unlimited Attempts</h3>
+        <p>Practice as many times as you want. Each session generates fresh questions so you never see the same one twice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOMAINS -->
+<section class="domains">
+  <div class="container">
+    <p class="section-label">Domains</p>
+    <h2 class="section-title">Pick your field.</h2>
+    <div class="domain-pills">
+      <span class="domain-pill">💻 Software Engineering</span>
+      <span class="domain-pill">📈 Data Science & ML</span>
+      <span class="domain-pill">🎨 UI/UX Design</span>
+      <span class="domain-pill">📣 Digital Marketing</span>
+      <span class="domain-pill">💰 Finance & Banking</span>
+      <span class="domain-pill">🏗️ Civil Engineering</span>
+      <span class="domain-pill">⚡ Electrical Engineering</span>
+      <span class="domain-pill">🧬 Biotech & Life Sciences</span>
+      <span class="domain-pill">📦 Product Management</span>
+      <span class="domain-pill">🔐 Cybersecurity</span>
+      <span class="domain-pill">☁️ Cloud & DevOps</span>
+      <span class="domain-pill">📋 HR & People Ops</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="container">
+    <p class="section-label">The process</p>
+    <h2 class="section-title">Four steps to interview-ready.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Build Your Profile</h4>
+        <p>Tell us your college, degree, domain, and upload your resume — once.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>AI Reads You</h4>
+        <p>Gemini analyses your background and crafts a personalised question set.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Live Mock Interview</h4>
+        <p>Answer questions in a timed, distraction-free interface that mirrors the real thing.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Get Your Report</h4>
+        <p>Read a structured breakdown of your performance and exactly where to improve.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-banner">
+  <div class="orb orb-indigo" style="width:300px;height:300px;top:-80px;right:-60px;"></div>
+  <h2>Ready to start practising?</h2>
+  <p>Create a free account and take your first AI mock interview today.</p>
+  <a href="signup.html" class="btn btn-mint btn-lg">Create Free Account</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 PrepIQ. Built for internship demonstration.</p>
+  <div class="footer-links">
+    <a href="about.html">About</a>
+    <a href="login.html">Login</a>
+    <a href="signup.html">Sign Up</a>
+  </div>
+</footer>
+
+</body>
+</html>

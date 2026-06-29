@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up — PrepIQ</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    .auth-wrap {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 6rem 5vw 3rem; position: relative; overflow: hidden;
+    }
+    .auth-card {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 460px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+    .auth-logo { font-family:var(--font-display);font-weight:800;font-size:1.4rem;margin-bottom:2rem;display:block; }
+    .auth-logo span { color:var(--indigo); }
+    .auth-title { font-family:var(--font-display);font-size:1.6rem;font-weight:800;letter-spacing:-.5px;margin-bottom:.4rem; }
+    .auth-sub { color:var(--slate2);font-size:.9rem;margin-bottom:1.75rem; }
+    .two-col { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
+    .password-hint { font-size:.78rem;color:var(--slate);margin-top:.3rem; }
+    .terms { font-size:.8rem;color:var(--slate2);margin:1rem 0;line-height:1.6; }
+    .terms a { color:var(--indigo-light); }
+    .auth-footer { text-align:center;margin-top:1.5rem;font-size:.88rem;color:var(--slate2); }
+    .auth-footer a { color:var(--indigo-light);font-weight:600; }
+    .auth-footer a:hover { text-decoration:underline; }
+
+    .strength-bar { display:flex;gap:4px;margin-top:.4rem; }
+    .s-seg { height:4px;flex:1;border-radius:4px;background:rgba(255,255,255,0.08);transition:background .3s; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Prep<span>IQ</span></a>
+  <div class="nav-links">
+    <a href="index.html" class="hide-mobile">Home</a>
+    <a href="about.html" class="hide-mobile">About</a>
+    <a href="login.html">Log in</a>
+  </div>
+</nav>
+
+<div class="auth-wrap">
+  <div class="orb orb-indigo" style="width:500px;height:500px;top:-100px;right:-150px;"></div>
+  <div class="orb orb-mint"   style="width:350px;height:350px;bottom:-80px;left:-80px;"></div>
+
+  <div class="auth-card">
+    <a href="index.html" class="auth-logo">Prep<span>IQ</span></a>
+
+    <h1 class="auth-title">Create your account.</h1>
+    <p class="auth-sub">Free forever. No credit card needed.</p>
+
+    <div class="alert alert-error" id="signupError"></div>
+    <div class="alert alert-success" id="signupSuccess"></div>
+
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-input" id="firstName" placeholder="Alex" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-input" id="lastName" placeholder="Jordan" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" id="signupEmail" placeholder="you@example.com" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-input" id="signupPassword" placeholder="Min. 8 characters" oninput="checkStrength(this.value)" />
+      <div class="strength-bar">
+        <div class="s-seg" id="s1"></div>
+        <div class="s-seg" id="s2"></div>
+        <div class="s-seg" id="s3"></div>
+        <div class="s-seg" id="s4"></div>
+      </div>
+      <p class="password-hint">Use 8+ characters with uppercase, numbers, and symbols.</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Confirm Password</label>
+      <input type="password" class="form-input" id="confirmPassword" placeholder="••••••••" />
+    </div>
+
+    <p class="terms">
+      By signing up you agree to PrepIQ's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+    </p>
+
+    <button class="btn btn-primary btn-full btn-lg" id="signupBtn" onclick="handleSignup()">
+      Create Account
+    </button>
+
+    <div class="divider-text" style="margin:1.5rem 0;">already have an account?</div>
+    <div class="auth-footer"><a href="login.html">Log in instead →</a></div>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8000';
+
+  function checkStrength(val) {
+    const segs = [document.getElementById('s1'),document.getElementById('s2'),
+                  document.getElementById('s3'),document.getElementById('s4')];
+    let score = 0;
+    if (val.length >= 8)         score++;
+    if (/[A-Z]/.test(val))       score++;
+    if (/[0-9]/.test(val))       score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const colors = ['#EF476F','#FFD166','#06D6A0','#06D6A0'];
+    segs.forEach((s,i) => s.style.background = i < score ? colors[score-1] : 'rgba(255,255,255,0.08)');
+  }
+
+  async function handleSignup() {
+    const btn  = document.getElementById('signupBtn');
+    const err  = document.getElementById('signupError');
+    const succ = document.getElementById('signupSuccess');
+
+    err.classList.remove('show'); succ.classList.remove('show');
+
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName  = document.getElementById('lastName').value.trim();
+    const email     = document.getElementById('signupEmail').value.trim();
+    const pass      = document.getElementById('signupPassword').value;
+    const confirm   = document.getElementById('confirmPassword').value;
+
+    if (!firstName || !lastName || !email || !pass || !confirm) {
+      err.textContent = 'Please fill in all fields.'; err.classList.add('show'); return;
+    }
+    if (pass !== confirm) {
+      err.textContent = 'Passwords do not match.'; err.classList.add('show'); return;
+    }
+    if (pass.length < 8) {
+      err.textContent = 'Password must be at least 8 characters.'; err.classList.add('show'); return;
+    }
+
+    btn.innerHTML = '<span class="spinner"></span> Creating account…'; btn.disabled = true;
+
+    try {
+      const res = await fetch(`${API}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ first_name: firstName, last_name: lastName, email, password: pass })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Signup failed.');
+
+      localStorage.setItem('prepiq_token', data.access_token);
+      localStorage.setItem('prepiq_user', JSON.stringify(data.user));
+
+      succ.textContent = 'Account created! Redirecting to profile setup…';
+      succ.classList.add('show');
+      setTimeout(() => window.location.href = 'profile-setup.html', 1200);
+    } catch (e) {
+      err.textContent = e.message; err.classList.add('show');
+      btn.innerHTML = 'Create Account'; btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

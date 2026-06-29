@@ -1,0 +1,27 @@
+# PrepIQ Backend Dependencies
+# Install with: pip install -r requirements.txt
+
+# Web framework
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+
+# MongoDB async driver
+motor==3.4.0
+pymongo==4.7.2
+
+# Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.9
+
+# Environment variables
+python-dotenv==1.0.1
+
+# Google Gemini AI
+google-generativeai==0.5.4
+
+# PDF parsing
+PyPDF2==3.0.1
+
+# Data validation (comes with FastAPI but pinning for safety)
+pydantic[email]==2.7.1
